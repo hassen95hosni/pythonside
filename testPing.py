@@ -22,19 +22,24 @@ def listen ( socket , data,rvmac) :
     while (True):
         data,add = socket.recvfrom(1024)
         rvmac=data[0:17]
+        print("server:")
+        print(data)
 def sendit(socket ):
-    while(True):
+    i=0
+    while(i<10):
         try :
                 print("send")
                 test= subprocess.Popen("ping 127.0.0.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
                 out,err=test.communicate()
                 s.send(out)
                 print("done")
+                i=i+1
                 time.sleep(5)
         except Exception as e :
                 s.send("cannot execute ping".encode("cp1252"))
                 print(e)
                 print(stderr)
+                i=i+1
 def senditaskedt(socket,data):
     print("send it")
     h=data[18:len(data)]
@@ -83,6 +88,30 @@ def sub ():
             print(e)
             print("error starting thread send asked by server")
             sub()
+def sendever(socket,data,rvmac):
+    while(True):
+        if (outmac.find(rvmac)==-1):
+        ##if(True):
+            try :
+                print("thread send every 5 second for 10 times is starting")
+                sendit(soscket)
+                print("thread send every 5 second for 10 times is working")
+            except Exception as e :
+                print(e)
+                print("error starting thread send every 5 second for 10 times")
+        else :
+            try :
+                print("thread send as tasked is starting")
+                senditaskedt(s,data)
+                print("thread send as tasked is working")
+            except Exception as e :
+                print(e)
+                print("error starting thread send asked by server")
+                sub()
+        
+##resultone=firebase.post('/automaticPing',{random.randint(1,100):d})
+##print (d)
+    
 
     
 import subprocess
@@ -144,25 +173,13 @@ try :
     print("thread listen is working")
 except :
     print("error starting thread listen")
-    
-##if (outmac.find(rvmac)==-1):
 if(True):
     try :
         print("thread send it is starting")
-        thread.start_new_thread( sendit, (s, ) )
+        thread.start_new_thread( sendever, (s,data,rvmac ) )
         print("thread send it is working")
     except Exception as e :
         print(e)
         print("error starting thread send")
-else :
-    try :
-        print("thread send tasked is starting")
-        thread.start_new_thread( senditaskedt, (s, data, ) )
-        print("thread send tasked is working")
-    except Exception as e :
-        print(e)
-        print("error starting thread send asked by server")
-        sub()
-        
 ##resultone=firebase.post('/automaticPing',{random.randint(1,100):d})
 ##print (d)
