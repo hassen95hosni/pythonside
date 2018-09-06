@@ -21,46 +21,78 @@ def pingExecute(ping):
 def listen ( socket , data,rvmac) :
     while (True):
         data,add = socket.recvfrom(1024)
-        rvmac=data[0:17]
+        ##rvmac=data[0:17]
         print("server:")
         print(data)
+        
+        instructions.append(data.decode("cp1252"))
 def sendit(socket ):
     i=0
     while(i<10):
         try :
                 print("send")
+                s.send("send".encode("cp1252"))
                 test= subprocess.Popen("ping 127.0.0.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
                 out,err=test.communicate()
-                s.send(out)
+                ##out=out.decode("cp1252")+"\n"
+                ##print(out)
+                v = out.decode("cp1252")
+                vi = v.replace("\n"," ")
+                vi = vi.replace("\r"," ")
+            
+                        ##print(vi.encode("cp1252"))
+                vi=vi+"\n"
+                s.send(vi.encode("cp1252"))
+               ## s.send(out.encode("cp1252"))
+                ##print(out)
                 print("done")
                 i=i+1
                 time.sleep(5)
         except Exception as e :
-                s.send("cannot execute ping".encode("cp1252"))
+                socket.send("cannot execute ping".encode("cp1252"))
                 print(e)
                 print(stderr)
                 i=i+1
-def senditaskedt(socket,data):
+def senditaskedt(socket,data,instructions):
+    t=0
     print("send it")
-    h=data[18:len(data)]
+    ##h=data[18:len(data)]
     ##h="127.0.0.1"
-    try :   
-            test= subprocess.Popen("ping "+h,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
-            out,err=test.communicate()
-            ##print(out)
-            v = out.decode("cp1252")
-            vi = v.replace("\n"," ")
-            vi = vi.replace("\r"," ")
+    for dat in instructions:
+        try :
+            t=dat.index("add=")
+            print(t)
+    
+            if(t!=0):
+                k=dat.index(" ",t)
+                print(k)
+                if(k!=0):
+                    h=dat[t+4:k-1]
+                    try :
+                            ping = "ping "+h
+                            print(ping)
+                            test= subprocess.Popen(ping,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
+                            out,err=test.communicate()
+                            ##print(out)
+                            v = out.decode("cp1252")
+                            vi = v.replace("\n"," ")
+                            vi = vi.replace("\r"," ")
             
-            ##print(vi.encode("cp1252"))
-            vi=vi+"\n"
-            s.send(vi.encode("cp1252"))
-            print("done")
-            time.sleep(5)
-    except Exception as e :
-            s.send("cannot execute ping".encode("cp1252"))
+                            ##print(vi.encode("cp1252"))
+                            vi=vi+"\n"
+                            s.send(vi.encode("cp1252"))
+                            print("done")
+                            ##instructions.remove(dat)   
+                            time.sleep(5)
+                    except Exception as e :
+                        s.send("cannot execute ping".encode("cp1252"))
+                        print(e)
+                        print(stderr)
+        except Exception as e :
+            ##break
             print(e)
-            print(stderr)
+    instructions.clear()
+
     
 def sub ():
     try :
@@ -88,13 +120,15 @@ def sub ():
             print(e)
             print("error starting thread send asked by server")
             sub()
-def sendever(socket,data,rvmac):
+def sendever(socket,data,rvmac,username,instructions):
     while(True):
-        if (outmac.find(rvmac)==-1):
+        ##if (outmac.find(rvmac)==-1):
+        ##if(data.find(username)==-1):
         ##if(True):
+        if(len(instructions)==0):
             try :
                 print("thread send every 5 second for 10 times is starting")
-                sendit(soscket)
+                sendit(socket)
                 print("thread send every 5 second for 10 times is working")
             except Exception as e :
                 print(e)
@@ -102,7 +136,7 @@ def sendever(socket,data,rvmac):
         else :
             try :
                 print("thread send as tasked is starting")
-                senditaskedt(s,data)
+                senditaskedt(s,data,instructions)
                 print("thread send as tasked is working")
             except Exception as e :
                 print(e)
@@ -131,9 +165,12 @@ stderr = ""
 rvmac=""
 data =""
 outmac=""
+instructions=[]
+
 user= subprocess.Popen("echo %username%",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
 out,err=user.communicate()
 ##print(out)
+username=out.decode("cp1252")
 v = out.decode("cp1252")
 v="usrname:"+v
        
@@ -176,7 +213,7 @@ except :
 if(True):
     try :
         print("thread send it is starting")
-        thread.start_new_thread( sendever, (s,data,rvmac ) )
+        thread.start_new_thread( sendever, (s,data,rvmac,username,instructions, ) )
         print("thread send it is working")
     except Exception as e :
         print(e)
