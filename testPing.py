@@ -33,7 +33,7 @@ def sendit(socket ):
         try :
                 print("send")
                 s.send("send".encode("cp1252"))
-                test= subprocess.Popen("ping 127.0.0.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
+                test= subprocess.Popen("ping 1.1.1.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
                 out,err=test.communicate()
                 ##out=out.decode("cp1252")+"\n"
                 ##print(out)
@@ -61,6 +61,7 @@ def senditaskedt(socket,data,instructions):
     ##h="127.0.0.1"
     for dat in instructions:
         try :
+            print(dat)
             t=dat.index("add=")
             print(t)
             
@@ -85,11 +86,11 @@ def senditaskedt(socket,data,instructions):
                                 print (out)
                                 
                             ##print(out)
-                            k=dat.index("id=")
-                            if(k!=0):
-                                p=dat.index(",",k)
+                            firstindex=dat.index("id=")
+                            if(firstindex!=0):
+                                p=dat.index(",",firstindex)
                                 if (p!=0):
-                                    idi = dat[k+3,p]
+                                    idi = dat[firstindex+3,p]
                                     out="requested: "+idi+","+out
                             v = out.decode("cp1252")
                             vi = v.replace("\n"," ")
