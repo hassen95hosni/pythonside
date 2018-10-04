@@ -177,7 +177,7 @@ import thread as thread
 from getmac import get_mac_address
 s= socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server="127.0.0.1"
-port = 2000
+port = 3000
 add=(server,port)
 s.connect(add)
 stderr = ""
