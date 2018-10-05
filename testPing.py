@@ -6,7 +6,7 @@ import socket
 ##from firebase import firebase
 import random
 import time
-import _thread as thread
+import thread as thread
 from getmac import get_mac_address
 
 def pingExecute(ping):
@@ -172,7 +172,7 @@ data =""
 outmac=""
 instructions=[]
 
-user= subprocess.Popen("echo %username%",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
+user= subprocess.Popen("hostname",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
 out,err=user.communicate()
 ##print(out)
 username=out.decode("cp1252")
