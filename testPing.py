@@ -1,3 +1,14 @@
+
+    
+import subprocess
+import os
+import socket
+##from firebase import firebase
+import random
+import time
+import _thread as thread
+from getmac import get_mac_address
+
 def pingExecute(ping):
     h = input ("insert addresse:")
     try :
@@ -18,7 +29,7 @@ def pingExecute(ping):
 
 
         
-def listen ( socket , data,rvmac,instructions) :
+def listen ( socket , data,rvmac) :
     while (True):
         data,add = socket.recvfrom(1024)
         ##rvmac=data[0:17]
@@ -26,14 +37,13 @@ def listen ( socket , data,rvmac,instructions) :
         print(data)
         
         instructions.append(data.decode("cp1252"))
-        
 def sendit(socket ):
     i=0
     while(i<10):
         try :
                 print("send")
                 s.send("send".encode("cp1252"))
-                test= subprocess.Popen("ping 1.1.1.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
+                test= subprocess.Popen("ping 127.0.0.1",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
                 out,err=test.communicate()
                 ##out=out.decode("cp1252")+"\n"
                 ##print(out)
@@ -61,37 +71,20 @@ def senditaskedt(socket,data,instructions):
     ##h="127.0.0.1"
     for dat in instructions:
         try :
-            print(dat)
             t=dat.index("add=")
             print(t)
-            
-            
+    
             if(t!=0):
-                
-                k=dat.index(",",t)
+                k=dat.index(" ",t)
                 print(k)
                 if(k!=0):
-                    h=dat[t+4:k]
+                    h=dat[t+4:k-1]
                     try :
-                            if "ping" in dat :
-                                ping = "ping "+h
-                                print(ping)
-                                test= subprocess.Popen(ping,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
-                                out,err=test.communicate()
-                            if "tracert" in dat :
-                                tracert = "tracert "+h
-                                print(tracert)
-                                test= subprocess.Popen(tracert,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
-                                out,err=test.communicate()
-                                print (out)
-                                
+                            ping = "ping "+h
+                            print(ping)
+                            test= subprocess.Popen(ping,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
+                            out,err=test.communicate()
                             ##print(out)
-                            firstindex=dat.index("id=")
-                            if(firstindex!=0):
-                                p=dat.index(",",firstindex)
-                                if (p!=0):
-                                    idi = dat[firstindex+3,p]
-                                    out="requested: "+idi+","+out
                             v = out.decode("cp1252")
                             vi = v.replace("\n"," ")
                             vi = vi.replace("\r"," ")
@@ -109,7 +102,7 @@ def senditaskedt(socket,data,instructions):
         except Exception as e :
             ##break
             print(e)
-    instructions.remove(dat)
+    instructions.clear()
 
     
 def sub ():
@@ -143,7 +136,6 @@ def sendever(socket,data,rvmac,username,instructions):
         ##if (outmac.find(rvmac)==-1):
         ##if(data.find(username)==-1):
         ##if(True):
-        print(instructions)
         if(len(instructions)==0):
             try :
                 print("thread send every 5 second for 10 times is starting")
@@ -166,17 +158,11 @@ def sendever(socket,data,rvmac,username,instructions):
 ##print (d)
     
 
-    
-import subprocess
-import os
-import socket
-##from firebase import firebase
-import random
-import time
-import thread as thread
-from getmac import get_mac_address
+
+
+
 s= socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server="127.0.0.1"
+server="10.89.72.99"
 port = 3000
 add=(server,port)
 s.connect(add)
@@ -186,13 +172,12 @@ data =""
 outmac=""
 instructions=[]
 
-
 user= subprocess.Popen("echo %username%",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
 out,err=user.communicate()
 ##print(out)
 username=out.decode("cp1252")
 v = out.decode("cp1252")
-v="usrname:"+v
+v = "usrname:"+v
        
 ##print(vi.encode("cp1252"))
 v=v+"\n"
@@ -226,7 +211,7 @@ s.send(t.encode("cp1252"))
 ##while (True) :
 try :
     print("thread listen is starting")
-    thread.start_new_thread( listen, (s, data,rvmac,instructions, ) )
+    thread.start_new_thread( listen, (s, data,rvmac, ) )
     print("thread listen is working")
 except :
     print("error starting thread listen")
