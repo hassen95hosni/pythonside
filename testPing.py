@@ -6,7 +6,7 @@ import socket
 ##from firebase import firebase
 import random
 import time
-import thread as thread
+import _thread as thread
 from getmac import get_mac_address
 
 def pingExecute(ping):
