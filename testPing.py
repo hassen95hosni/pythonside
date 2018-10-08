@@ -6,7 +6,7 @@ import socket
 ##from firebase import firebase
 import random
 import time
-import _thread as thread
+import thread as thread
 from getmac import get_mac_address
 
 def pingExecute(ping):
@@ -84,8 +84,8 @@ def senditaskedt(socket,data,instructions):
                             print(ping)
                             test= subprocess.Popen(ping,stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
                             out,err=test.communicate()
-                            ##print(out)
-                            v = out.decode("cp1252")
+                            print(out)
+                            v = out.decode("cp1252")x
                             vi = v.replace("\n"," ")
                             vi = vi.replace("\r"," ")
             
@@ -102,7 +102,7 @@ def senditaskedt(socket,data,instructions):
         except Exception as e :
             ##break
             print(e)
-    instructions.clear()
+    del instructions[:]
 
     
 def sub ():
@@ -170,7 +170,7 @@ stderr = ""
 rvmac=""
 data =""
 outmac=""
-instructions=[]
+instructions=list();
 
 user= subprocess.Popen("hostname",stdout=subprocess.PIPE,stderr = subprocess.PIPE,shell=True)
 out,err=user.communicate()
